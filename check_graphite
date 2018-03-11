@@ -81,7 +81,7 @@ def check(host, metric, warning_threshold, critical_threshold,
     value = apply_function(series, function)
 
     message = '%s = %s (%s over %s minutes)' % (metric, value, function, duration)
-    message = message.replace('|', '_') # everything after | is "performance info"
+    message += ' | data=%s;%s;%s' % (value, warning_threshold, critical_threshold)
     info = 'critical %s %s' % ('<' if invert else '>', critical_threshold)
     if warning is not None:
         info += '\nwarning %s %s' % ('<' if invert else '>', warning_threshold)
@@ -111,26 +111,18 @@ def apply_function(series, function):
 
 def critical(message, info=None):
     print 'CRITICAL %s' % message
-    if info:
-        print '\n%s' % info
     sys.exit(EXIT_CRITICAL)
 
 def warning(message, info=None):
     print 'WARNING %s' % message
-    if info:
-        print '\n%s' % info
     sys.exit(EXIT_WARNING)
 
 def ok(message, info=None):
     print 'OK %s' % message
-    if info:
-        print '\n%s' % info
     sys.exit(EXIT_OK)
 
 def unknown(message, info=None):
     print 'UNKNOWN %s' % message
-    if info:
-        print '\n%s' % info
     sys.exit(EXIT_UNKNOWN)
 
 SI_UNITS = {
