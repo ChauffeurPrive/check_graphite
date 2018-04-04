@@ -65,18 +65,18 @@ def check(host, metric, warning_threshold, critical_threshold,
         else:
             r = requests.get(url, params=params, auth=auth, verify=False)
     except requests.exceptions.ConnectionError, e:
-        critical('Failed to contact Graphite server', e.message)
+        warning('Failed to contact Graphite server', e.message)
     try:
         data = r.json()
     except json.JSONDecodeError, e:
-        critical('Could not decode JSON', r.content)
+        warning('Could not decode JSON', r.content)
 
     try:
         series = [x for x, _ in data[0]['datapoints'] if x is not None]
     except IndexError: # metric does not exist
-        critical('Metric %s not found' % metric)
+        warning('Metric %s not found' % metric)
     if len(series) == 0:
-        critical('No data for %s' % metric)
+        ok('No data for %s' % metric)
 
     value = apply_function(series, function)
 
